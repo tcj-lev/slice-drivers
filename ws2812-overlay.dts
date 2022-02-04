@@ -2,7 +2,7 @@
 /plugin/;
 
 / {
-  compatible = "brcm,bcm2708";
+  compatible = "brcm,bcm2835";
 
   // disable pwm
   fragment@0 {
@@ -18,7 +18,7 @@
       #address-cells = <1>;
       #size-cells = <1>;
 
-      ws2812: ws2812 {
+      ws2812: ws2812@7e20c000 {
         compatible = "rpi,ws2812";
         pinctrl-names = "default";
         pinctrl-0 = <&pwm0_gpio40>;
