@@ -88,12 +88,12 @@ static int snd_slice_hw_params(struct snd_pcm_substream *substream,
 
 	err = clk_set_rate(gp0_clock, sysclk);
 	if(err < 0)
-		pr_err("Failed to set clock rate for gp0 clock\n");
+		dev_err(rtd->card->dev, "Failed to set clock rate for gp0 clock\n");
 
 	if((ret = clk_prepare_enable(gp0_clock)) < 0)
-		pr_err("Failed to enable clock\n");
+		dev_err(rtd->card->dev, "Failed to enable clock\n");
 
-	dev_err(rtd->card->dev, "Set sampling frequency %d, using sysclk %d\n", rate, sysclk);
+	dev_dbg(rtd->card->dev, "Set sampling frequency %d, using sysclk %d\n", rate, sysclk);
 
 	err = snd_soc_dai_set_sysclk(codec_dai, 0, sysclk,
 				     SND_SOC_CLOCK_OUT);
@@ -125,7 +125,7 @@ static int snd_slice_hw_params(struct snd_pcm_substream *substream,
 static int snd_slice_params_fixup(struct snd_soc_pcm_runtime *rtd,
             struct snd_pcm_hw_params *params)
 {
-	printk(KERN_ERR "snd_slice_params_fixup called\n");
+	dev_dbg(rtd->card->dev, "snd_slice_params_fixup called\n");
 	/* force 32 bit */
 	params_set_format(params, SNDRV_PCM_FORMAT_S32_LE);
 	return 0;
@@ -213,7 +213,7 @@ static int snd_slice_probe(struct platform_device *pdev)
 	}
 	else
 	{
-		printk(KERN_ERR "SLICEAUDIO - ERROR no Device Tree!\n");
+		dev_err(&pdev->dev, "SLICEAUDIO - ERROR no Device Tree!\n");
 	}
 
 	ret = snd_soc_register_card(&snd_slice);
@@ -225,19 +225,19 @@ static int snd_slice_probe(struct platform_device *pdev)
 
 	gp0_clock = devm_clk_get(&pdev->dev, "gp0");
 	if (IS_ERR(gp0_clock)) {
-		pr_err("Failed to get gp0 clock\n");
+		dev_err(&pdev->dev, "Failed to get gp0 clock\n");
 		return PTR_ERR(gp0_clock);
 	}
 
 	ret = clk_set_rate(gp0_clock, 12288000);
 	if (ret) {
-		pr_err("Failed to set the GP0 clock rate\n");
+		dev_err(&pdev->dev, "Failed to set the GP0 clock rate\n");
 		return ret;
 	}
 
 	ret = clk_prepare_enable(gp0_clock);
 	if (ret) {
-		pr_err("Failed to turn on gp0 clock: %d\n", ret);
+		dev_err(&pdev->dev, "Failed to turn on gp0 clock: %d\n", ret);
 		return ret;
 	}
 
