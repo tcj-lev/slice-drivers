@@ -87,8 +87,7 @@
         pinctrl-names = "default";
         pinctrl-0 = <&cs4265_reset_pins>;
 
-        cs4265-reset-gpios = <&gpio 33 0>; /* AUD_RST_N on GPIO33 */
-        cirrus,no-s16le; // remove S16LE support to workaround I2S controller issue
+        reset-gpios = <&gpio 33 0>; /* AUD_RST_N on GPIO33 */
         status = "okay";
       };
     };
