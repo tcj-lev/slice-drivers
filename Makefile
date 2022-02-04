@@ -1,16 +1,34 @@
 obj-m += ws2812.o
-obj-m += slice.o
+obj-m += snd-slice.o
 
-KVERSION := $(shell uname -r)
-KDIR := /lib/modules/$(KVERSION)/build
+ifeq ($(KERNELRELEASE),)
+
+KVERSION ?= $(shell uname -r)
+KDIR ?= /usr/lib/modules/$(KVERSION)/build
+DESTDIR ?= /
+DTC ?= dtc
 PWD := $(shell pwd)
 
-default:
+all: modules overlays
+
+install: modules_install overlays_install
+
+modules:
 	$(MAKE) -C $(KDIR) M=$(PWD) modules
+
+modules_install:
+	$(MAKE) -C $(KDIR) M=$(PWD) INSTALL_MOD_PATH=${DESTDIR} modules_install
+
+overlays:
+	${DTC} -@ -I dts -O dtb -o slice.dtbo slice-overlay.dts
+	${DTC} -@ -I dts -O dtb -o ws2812.dtbo ws2812-overlay.dts
+
+overlays_install:
+	cp slice.dtbo ws2812.dtbo ${DESTDIR}/boot/overlays
 
 clean:
 	$(MAKE) -C $(KDIR) M=$(PWD) clean
+	rm -f slice.dtbo
 
-install:
-	$(MAKE) -C $(KDIR) M=$(PWD) modules_install
-	@depmod -a $(KVERSION)
+
+endif
