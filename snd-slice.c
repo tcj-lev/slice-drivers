@@ -122,15 +122,6 @@ static int snd_slice_hw_params(struct snd_pcm_substream *substream,
 	return 0;
 }
 
-static int snd_slice_params_fixup(struct snd_soc_pcm_runtime *rtd,
-            struct snd_pcm_hw_params *params)
-{
-	dev_dbg(rtd->card->dev, "snd_slice_params_fixup called\n");
-	/* force 32 bit */
-	params_set_format(params, SNDRV_PCM_FORMAT_S32_LE);
-	return 0;
-}
-
 /* machine stream operations */
 static struct snd_soc_ops snd_slice_ops = {
 	.hw_params = snd_slice_hw_params,
@@ -175,7 +166,6 @@ static struct snd_soc_dai_link snd_slice_dai[] = {
 				SND_SOC_DAIFMT_CBM_CFM,
 	.ops		= &snd_slice_ops,
 	.init		= snd_slice_init,
-	.be_hw_params_fixup = snd_slice_params_fixup,
 	SND_SOC_DAILINK_REG(hifi),
 },
 };
