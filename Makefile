@@ -4,8 +4,9 @@ obj-m += snd-slice.o
 ifeq ($(KERNELRELEASE),)
 
 KVERSION ?= $(shell uname -r)
-KDIR ?= /usr/lib/modules/$(KVERSION)/build
+KDIR ?= /lib/modules/$(KVERSION)/build
 DESTDIR ?= /
+M1 ?= /mnt/mmcblk0p1
 DTC ?= dtc
 PWD := $(shell pwd)
 
@@ -24,7 +25,7 @@ overlays:
 	${DTC} -@ -I dts -O dtb -o ws2812.dtbo ws2812-overlay.dts
 
 overlays_install:
-	cp slice.dtbo ws2812.dtbo ${DESTDIR}/boot/overlays
+	cp slice.dtbo ws2812.dtbo ${M1}/overlays
 
 clean:
 	$(MAKE) -C $(KDIR) M=$(PWD) clean
